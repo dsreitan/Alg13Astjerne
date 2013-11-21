@@ -11,7 +11,7 @@ import Graph.Graph.Edge;
 
 public class Astjerne {
 
-    private final boolean DIJKSTRAS = false;
+    private boolean astar = false;
     public int numberOfNodesFromSource = 0;
     private final List<Node> nodes;
     private final List<Edge> edges;
@@ -20,9 +20,10 @@ public class Astjerne {
     public Map<Node, Node> predecessors;
     public Map<Node, Integer> distance;
 
-    public Astjerne(Graph graph) {
+    public Astjerne(Graph graph, boolean astar) {
         nodes = graph.getNodes();
         edges = graph.getEdges();
+        this.astar = astar;
     }
 
     public Integer execute(Node source, Node target) {
@@ -34,10 +35,12 @@ public class Astjerne {
         distance.put(source, 0);
         unSettledNodes.add(source);
 
+        double lowEstimateDistance = getDistanceFromCoords(source, target);
+
         while (!unSettledNodes.isEmpty()) {
             Node node = getUnSettledNodeWithLowestDistance();
             settleNode(node);
-                    
+
             if (getCumulativeNodeDistance(node) == Integer.MAX_VALUE) {
                 break;
             }
@@ -47,15 +50,25 @@ public class Astjerne {
                     continue;
                 }
 
-                if (getCumulativeNodeDistance(neighbor)
+                // Sjekker om naboen har en kortere distanse fra source enn noden den kom fra + distansen mellom noden og naboen
+                if (!astar && getCumulativeNodeDistance(neighbor)
                         > getCumulativeNodeDistance(node) + getDistanceBetweenNeighborNodes(node, neighbor)) {
 
                     distance.put(neighbor, getCumulativeNodeDistance(node)
                             + getDistanceBetweenNeighborNodes(node, neighbor));
                     predecessors.put(neighbor, node);
                     unSettledNodes.add(neighbor);
+
+                } // Astjerne algoritmen
+                else if (astar && getDistanceFromCoords(source, neighbor) <= (lowEstimateDistance)
+                        && getCumulativeNodeDistance(neighbor) > getCumulativeNodeDistance(node) + getDistanceBetweenNeighborNodes(node, neighbor)) {
+                    distance.put(neighbor, getCumulativeNodeDistance(node)
+                            + getDistanceBetweenNeighborNodes(node, neighbor));
+                    predecessors.put(neighbor, node);
+                    unSettledNodes.add(neighbor);
                 }
-                if (neighbor.equals(target)){
+                // Stopper når han finner målet
+                if (neighbor.equals(target)) {
                     return getCumulativeNodeDistance(neighbor);
                 }
             }
@@ -92,9 +105,9 @@ public class Astjerne {
         }
         throw new RuntimeException("Source and target are not neighbors");
     }
-    
-    public double getTotalDistance(Node a, Node b){
-        
+
+    public double getTotalDistance(Node a, Node b) {
+
         return 0;
     }
 
@@ -157,13 +170,5 @@ public class Astjerne {
 
             System.out.println(nodeID + "\t " + predecessorID + " \t " + runtime);
         }
-
-
-
-//        System.out.println(getDistanceFromCoords(nodes.get(3), nodes.get(1)) + " m");
-//        System.out.println(getTimeUsedFromDistance(getDistanceFromCoords(nodes.get(3), nodes.get(1))));
-//
-//        System.out.println(getDistanceFromCoords(new Node("1", 63.4276336, 10.4324587), new Node("2", 63.4108125, 10.4250984)));
-//        System.out.println(getTimeUsedFromDistance(getDistanceFromCoords(new Node("1", 63.4276336, 10.4324587), new Node("2", 63.4108125, 10.4250984))));
     }
 }
