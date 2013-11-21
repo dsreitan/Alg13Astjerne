@@ -71,7 +71,7 @@ public class Test {
         //a.dump();
         double tid = stopp.getTime() - start.getTime();
 
-        System.out.println("Gjennomløpstid: " + tid + " ms");
+        //System.out.println("Gjennomløpstid: " + tid + " ms");
         System.out.println(source.getId() + " -> " + target.getId() + " = " + a.getCumulativeNodeDistance(target));
         System.out.println("* nodes: " + a.settledNodes.size());
     }
