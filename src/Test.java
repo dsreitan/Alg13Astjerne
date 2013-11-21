@@ -10,7 +10,7 @@ import Graph.Graph.Node;
 public class Test {
 
     public static void main(String[] args) throws Exception {
-        Graph graph = new Graph();
+        Graph graph = new Graph(); testfeil
         try {
             String nodefil = "src/noder.txt";
             FileReader fileReader = new FileReader(new File(nodefil));
